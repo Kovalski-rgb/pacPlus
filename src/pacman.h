@@ -12,7 +12,7 @@ class Pacman{
 
     public:
         Pacman(){
-            speed = 1;
+            speed = 0.1;
             lifes = 3;
             axisY = neutral;
             axisX = down;
@@ -22,7 +22,7 @@ class Pacman{
         }
 
         Pacman(double posY, double posX){
-            speed = 1;
+            speed = 0.1;
             lifes = 3;
             axisY = neutral;
             axisX = down;

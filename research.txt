@@ -8,3 +8,6 @@ ncurses arrow not detected - https://cplusplus.com/forum/beginner/248599/
 ncurses time limit for input - https://stackoverflow.com/questions/23788482/how-do-you-impose-a-time-limit-for-input-in-ncurses-when-using-getstr
 ncurses documentation how to  - http://www.ibiblio.org/pub/Linux/docs/HOWTO/other-formats/html_single/NCURSES-Programming-HOWTO.html#KEYPAD
 ncurses colors - https://stackoverflow.com/questions/10487166/ncurses-multi-colors-on-screen
+cpp constructors - https://www.w3schools.com/cpp/cpp_constructors.asp
+cpp concatenate string and int - https://stackoverflow.com/questions/191757/how-to-concatenate-a-stdstring-and-an-int
+ncurses esc and alt keys - https://stackoverflow.com/questions/5977395/ncurses-and-esc-alt-keys
