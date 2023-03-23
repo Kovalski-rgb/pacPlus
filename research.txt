@@ -1,0 +1,10 @@
+linker flags - https://stackoverflow.com/questions/11783932/how-do-i-add-a-linker-or-compile-flag-in-a-cmake-file
+CMAKE target_link_options - https://cmake.org/cmake/help/git-stage/command/target_link_options.html
+CMAKE starting point - https://cmake.org/cmake/help/latest/guide/tutorial/A%20Basic%20Starting%20Point.html
+gcc error when using ncurses lib - https://stackoverflow.com/questions/67280087/gcc-error-when-using-ncurses-library-in-a-c-program
+ncurses lib with examples - https://www.sbarjatiya.com/notes_wiki/index.php/Using_ncurses_library_with_C#Example(01)
+ncurses print string variables - https://stackoverflow.com/questions/66130242/is-there-a-way-to-print-a-string-type-variable-in-c-via-the-ncurses-library
+ncurses arrow not detected - https://cplusplus.com/forum/beginner/248599/
+ncurses time limit for input - https://stackoverflow.com/questions/23788482/how-do-you-impose-a-time-limit-for-input-in-ncurses-when-using-getstr
+ncurses documentation how to  - http://www.ibiblio.org/pub/Linux/docs/HOWTO/other-formats/html_single/NCURSES-Programming-HOWTO.html#KEYPAD
+ncurses colors - https://stackoverflow.com/questions/10487166/ncurses-multi-colors-on-screen
