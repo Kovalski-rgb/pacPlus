@@ -78,7 +78,7 @@ class Screen{
             this->map = screen;
         }
 
-        void setupGameField(){
+        vector<vector<int>> setupGameField(){
             vector<vector<int>> screen
             {                                           //|
                 {bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs,bs},
@@ -120,9 +120,11 @@ class Screen{
             };
 
             this->map = screen;
+            return screen;
         }
 
-        int countPellets(){
+
+        int countPellets(vector<vector<int>> map){
             int cont = 0;
             for(long unsigned int row = 0; row < map.size(); row++){
                 for(long unsigned int col = 0; col < map[0].size(); col++){

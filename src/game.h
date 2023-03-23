@@ -17,12 +17,16 @@ class Game{
     string fontColor;
     string bgColor;
     char columnSeparator;
+    int score;
+    int pellets;
 
     Game(Screen screen){
         this->gameEnded = false;
         this->gameMap = screen.map;
+        this->pellets = screen.countPellets(gameMap);
         this->player = Pacman(25,13);
         this->columnSeparator = ' ';
+        this->score = 0;
     }
 
     void play(){
@@ -37,19 +41,48 @@ class Game{
             keyPressHandler();
             vector<double> nextExpectedPos = getNextPlayerPos();
 
+
             if(
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == player.getAppearance() ||
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.BLANK_SPACE ||
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.PELLET || 
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.POWER_PELLET)
             {
+                processNextPos(nextExpectedPos[0], nextExpectedPos[1]);
                 movePlayer();
             }
             printMap();
             printEntities();
             printDebug(3, "Player Pos["+to_string(player.getPosY())+"]["+to_string(player.getPosX())+"]");
+            printDebug(4, "Score: "+to_string(score));
+            printDebug(5, "PelletCount: "+to_string(pellets));
+
+            if(pellets == 0){
+                resetMap();
+            }
         }
         endwin();
+    }
+
+    void resetMap(){
+        player.setPosX(13);
+        player.setPosY(25);
+        gameMap = screen.setupGameField();
+        pellets = screen.countPellets(gameMap);
+    }
+
+    void processNextPos(int posY, int posX){
+        if(gameMap[posY][posX] == screen.PELLET){
+            gameMap[posY][posX] = screen.BLANK_SPACE;
+            pellets -= 1;
+            score += 10;
+            return;
+        }
+        if(gameMap[posY][posX] == screen.POWER_PELLET){
+            gameMap[posY][posX] = screen.BLANK_SPACE;
+            score += 50;
+            return;
+        }
     }
 
     vector<double> getPlayerDeltas(){

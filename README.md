@@ -25,8 +25,9 @@ cd pacPlus
   - [ ] Instant direction change (right now sometimes it takes >~50ms to turn)
   - [ ] Scroll to other side then crossing the map border
 - [ ] Interacting with collectibles
-  - [ ] Pellets increase player score by 10
-  - [ ] Power Pellets increase player score by 50, change ghosts state to frightened
+  - [x] Pellets increase player score by 10
+  - [x] Power Pellets increase player score by 50
+  - [ ] Collecting Power Pellets change ghosts states to frightened
 - [ ] Score
   - [ ] Score display on top of the map
 - [ ] High Scores
