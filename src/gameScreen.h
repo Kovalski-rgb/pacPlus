@@ -123,6 +123,50 @@ class Screen{
             return screen;
         }
 
+        // test map created by chatGPT
+        vector<vector<int>> chatGPTmap2(){
+            vector<vector<int>> screen
+            {                                                           //|15
+                {hw, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pp, pl, pl, pl, pl, pl, pl, pl, pl, pl, pl, pl, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pl, hw, hw, bs, hw, hw, bs, hw, hw, bs, hw, hw, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pl, hw, hw, bs, hw, hw, bs, hw, hw, bs, hw, hw, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pl, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pl, hw, hw, bs, hw, bs, hw, hw, bs, hw, hw, hw, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pl, bs, bs, bs, hw, bs, bs, bs, bs, bs, bs, bs, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pl, hw, hw, bs, hw, bs, hw, hw, bs, hw, hw, hw, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pl, hw, hw, bs, bs, bs, bs, bs, bs, bs, hw, hw, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pl, bs, bs, bs, hw, bs, hw, hw, bs, bs, bs, bs, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pl, hw, hw, bs, hw, bs, hw, hw, bs, hw, hw, hw, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pl, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pl, hw, hw, bs, hw, hw, bs, hw, hw, bs, hw, hw, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pl, hw, hw, bs, hw, hw, bs, hw, hw, bs, hw, hw, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {vw, pp, pl, pl, pl, bs, pl, bs, pl, bs, pl, pl, pl, pl, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+        /*15*/  {vw, vw, vw, vw, vw, bs, vw, vw, vw, vw, vw, vw, vw, vw, vw, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw ,hw, hw},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, pl, pl, pl, pl, pl, pl, pl, pl, pl, pl, pl, pl ,pl, bs},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, hw, id, hw, hw, hw, hw, hw, id, hw, hw, hw, hw, hw ,hw, hw},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, pl, pl, pl, pl, pl, pl, bs, pl, pl, pl, pl, pl ,pl, bs},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, hw, hw, hw, hw, hw, hw, hw, id, hw, hw, hw, hw, hw ,hw, hw},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, pl, pl, pl, pl, bs, pl, pl, pl, pl, bs, pl, pl, pl ,pl, pl},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, hw, hw, hw, id, hw, hw, hw, hw, hw, hw, id, hw, hw ,hw, hw},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, pl, pl, pl, bs, pl, pl, pl, pl, pl, pl, bs, pl, pl ,pl, pl},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, hw, hw, hw, id, hw, hw, hw, hw, hw, hw, id, hw, hw ,hw, hw},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, pl, pl, pl, pl, bs, pl, pl, pl, pl, bs, pl, pl, pl ,pl, pl},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, hw, id, hw, hw, hw, hw, hw, id, hw, hw, hw, hw, hw ,hw, hw},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, pl, pl, pl, pl, pl, pl, bs, pl, pl, pl, pl, pl ,pl, bs},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, hw, hw, hw, hw, hw, hw, hw, id, hw, hw, hw, hw, hw ,hw, hw},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, pl, pl, pl, pl, pl, pl, pl, pl, pl, pl, pl, pl ,pl, bs},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw, hw ,hw, hw},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs},
+                {bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs, bs}
+            };
+            return screen;
+        }
 
         int countPellets(vector<vector<int>> map){
             int cont = 0;

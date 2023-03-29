@@ -3,7 +3,7 @@ Pac-Man in C++
 
 The goal of this project is to Implement PACMAN in C++, to later implement an AI for PACMAN
 
-### Building and running
+### Building and running (linux)
  - To build on linux, you'll need CMake
  - After installing CMake (if you don't have installed), run these commands on terminal
 ```
@@ -43,7 +43,7 @@ cd pacPlus
   - [ ] Title screen with logo
   - [ ] Sound(maybe?)
   - [ ] Show HighScore on TitleScreen
-- [ ] Startup CountDown (wait 3s before pacman moves)
+- [x] Startup CountDown (wait 3s before pacman moves)
 - [ ] PacMan AI
   - [ ] Get all pellets as fast as posible
   - [ ] Get the max score in x time

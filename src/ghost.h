@@ -1,42 +1,27 @@
 #include "axis.h"
 #include "IEntity.h"
 
-class Pacman{
+class Ghost : public IEntity{
     private:
         int appearance;
         Axis axisX;
         Axis axisY;
         double speed;
-        int lifes;
         double posX;
         double posY;
+        short color;
+        short background;
 
     public:
-        Pacman(){
+        Ghost(double posY, double posX, int appearance, short color, short background){
             speed = 0.1;
-            lifes = 3;
             axisY = neutral;
-            axisX = down;
-            appearance = 35;
-            posX = 0;
-            posY = 0;
-        }
-
-        Pacman(double posY, double posX){
-            speed = 0.1;
-            lifes = 3;
-            axisY = neutral;
-            axisX = down;
-            appearance = 35;
+            axisX = neutral;
+            appearance = appearance;
             this->posX = posX;
             this->posY = posY;
-        }
-
-        int getLifes(){
-            return lifes;
-        }
-        void setLifes(int lifes){
-            this->lifes = lifes;
+            this->color = color;
+            this->background = background;
         }
 
         double getSpeed(){
@@ -76,5 +61,17 @@ class Pacman{
         }
         void setPosY(double posY){
             this->posY = posY;
+        }
+        short getColor(){
+            return this->color;
+        }
+        short getBackground(){
+            return this->background;
+        }
+        void setColor(short color){
+            this->color = color;
+        }
+        void setBackground(short background){
+            this->background = background;
         }
 };

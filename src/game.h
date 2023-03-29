@@ -2,8 +2,10 @@
 #include <stdio.h>
 #include <cmath>
 #include <ncurses.h>
+#include <chrono>
 #include "pacman.h"
 #include "gameScreen.h"
+#include "randomPath.h"
 
 using namespace std;
 
@@ -19,14 +21,28 @@ class Game{
     char columnSeparator;
     int score;
     int pellets;
+    IPathFinder* ia;
+
+    chrono::_V2::system_clock::time_point fpsTimer;
+    chrono::_V2::system_clock::time_point refreshTimer;
+    chrono::_V2::system_clock::time_point movementTimer;
+
+    int iterationCounter;
+    int fps;
+    int fpsCap;
+    int movementCap;
 
     Game(Screen screen){
         this->gameEnded = false;
-        this->gameMap = screen.map;
+        this->gameMap = screen.setupGameField();
         this->pellets = screen.countPellets(gameMap);
         this->player = Pacman(25,13);
         this->columnSeparator = ' ';
         this->score = 0;
+        this->ia = new RandomPath();
+        this->fps = 0;
+        this->fpsCap = 100; //50=~20fps
+        this->movementCap = 10;
     }
 
     void play(){
@@ -37,31 +53,94 @@ class Game{
         
         init_pair(0, COLOR_BLACK, COLOR_WHITE);
 
+        printMap();
+        printEntities();
+        preGame();
+        movementTimer = chrono::high_resolution_clock::now();
+        refreshTimer = chrono::high_resolution_clock::now();
+
         while(!gameEnded){
             keyPressHandler();
-            vector<double> nextExpectedPos = getNextPlayerPos();
 
+            auto movementNow = chrono::high_resolution_clock::now();
+            auto movementDiff = chrono::duration_cast<chrono::milliseconds>(movementNow - movementTimer).count();
 
-            if(
-                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == player.getAppearance() ||
-                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.BLANK_SPACE ||
-                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.PELLET || 
-                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.POWER_PELLET)
-            {
-                processNextPos(nextExpectedPos[0], nextExpectedPos[1]);
-                movePlayer();
+            // limit to update player movement
+            if(movementDiff >= movementCap){
+                movementTimer = chrono::high_resolution_clock::now();
+                vector<double> nextExpectedPos = getNextPlayerPos();
+                if(isValidPlayerMove(nextExpectedPos))
+                {
+                    processNextMoveScore(nextExpectedPos[0], nextExpectedPos[1]);
+                    movePlayer();
+                }
             }
-            printMap();
-            printEntities();
-            printDebug(3, "Player Pos["+to_string(player.getPosY())+"]["+to_string(player.getPosX())+"]");
-            printDebug(4, "Score: "+to_string(score));
-            printDebug(5, "PelletCount: "+to_string(pellets));
+
+            // limit to refreshRate
+            auto refreshNow = chrono::high_resolution_clock::now();
+            auto refreshDiff = chrono::duration_cast<chrono::milliseconds>(refreshNow - refreshTimer).count();
+            if(refreshDiff >= fpsCap){
+                refreshTimer = chrono::high_resolution_clock::now();
+                refreshScreen();
+            }
 
             if(pellets == 0){
                 resetMap();
             }
+
         }
         endwin();
+    }
+
+    void refreshScreen(){
+        printMap();
+        printEntities();
+        printDebug(3, "Player Pos["+to_string(player.getPosY())+"]["+to_string(player.getPosX())+"]");
+        printDebug(4, "Score: "+to_string(score));
+        printDebug(5, "PelletCount: "+to_string(pellets));
+
+        auto now = chrono::high_resolution_clock::now();
+        long diff = chrono::duration_cast<chrono::milliseconds>(now-fpsTimer).count();
+
+        printDebug(6, "Fps: "+ to_string(fps) + "fps");
+
+
+        if(diff>=1000){
+            fps = iterationCounter;
+            iterationCounter = 0;
+            fpsTimer = chrono::high_resolution_clock::now();
+        }else{
+            iterationCounter++; 
+        }
+    }
+
+    bool isValidPlayerMove(vector<double> nextExpectedPos){
+        return (
+                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == player.getAppearance() ||
+                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.BLANK_SPACE ||
+                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.PELLET || 
+                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.POWER_PELLET);
+    }
+
+    void preGame(){
+        int count = 4;
+        while(count>0){
+            auto now = chrono::high_resolution_clock::now();
+            long diff = chrono::duration_cast<chrono::milliseconds>(now-fpsTimer).count();
+
+            if(diff>=1000){
+                count--;
+                fpsTimer = chrono::high_resolution_clock::now();
+            }
+            printDebug(7, to_string(count));
+        }
+
+    }
+
+    void player_ia(){
+        vector<Axis> movement = ia->turnDirection();
+        player.setAxisY(movement[0]);
+        player.setAxisX(movement[1]);
     }
 
     void resetMap(){
@@ -71,7 +150,7 @@ class Game{
         pellets = screen.countPellets(gameMap);
     }
 
-    void processNextPos(int posY, int posX){
+    void processNextMoveScore(int posY, int posX){
         if(gameMap[posY][posX] == screen.PELLET){
             gameMap[posY][posX] = screen.BLANK_SPACE;
             pellets -= 1;
@@ -147,6 +226,7 @@ class Game{
         player.setPosX(nextPos[1]);
     }
 
+    // can be optimized to just print the diff, not the entire map (maybe ncurses already does that, idk)
     void printMap(){
         int row,col;
         getmaxyx(stdscr,row,col);
@@ -186,7 +266,7 @@ class Game{
 
     void keyPressHandler(){
         int key;
-        timeout(10);
+        timeout(0);
         key = getch();
 
         switch(key){

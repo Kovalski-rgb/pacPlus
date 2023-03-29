@@ -1,3 +1,4 @@
+#pragma once
 enum Axis {
     // adds positive speed to pacman`s movement
     up = +1,
