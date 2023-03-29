@@ -15,11 +15,11 @@ cd pacPlus
  - To run, just execute the `PacMan` file inside `build/` folder on your project. 
 
 ### TODO list
-- [ ] Screen Printing in CLI
+- [x] Screen Printing in CLI
   - [x] Printing Colors on the CLI version
   - [x] Printing Pellets with different font color than walls
   - [x] Printing Pacman with yellow background for contrast
-  - [ ] Printing Ghosts
+  - [x] Printing Ghosts
 - [ ] Player Movement
   - [x] Up, Down, Left and Right
   - [ ] Instant direction change (right now sometimes it takes >~50ms to turn)
@@ -34,10 +34,19 @@ cd pacPlus
   - [ ] Store HighScores on an external file
   - [ ] Display highscores bellow the actual score
 - [ ] Ghosts (with AI)
+  - [ ] Interact with PacMan
   - [ ] Blinky 
+    - [ ] Complex AI
+    - [x] Simple AI (random)
   - [ ] Pinky
+    - [ ] Complex AI
+    - [x] Simple AI (random)
   - [ ] Inky
+    - [ ] Complex AI
+    - [x] Simple AI (random)
   - [ ] Clyde
+    - [ ] Complex AI
+    - [x] Simple AI (random)
 - [ ] GUI (maybe this'll be expanded later)
 - [ ] Menu before game
   - [ ] Title screen with logo

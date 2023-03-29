@@ -1,7 +1,7 @@
 #include "axis.h"
 #include "IEntity.h"
 
-class Pacman{
+class Pacman : public IEntity{
     private:
         int appearance;
         Axis axisX;
@@ -10,6 +10,11 @@ class Pacman{
         int lifes;
         double posX;
         double posY;
+        double initPosY;
+        double initPosX;
+
+        short color;
+        short background;
 
     public:
         Pacman(){
@@ -20,6 +25,12 @@ class Pacman{
             appearance = 35;
             posX = 0;
             posY = 0;
+
+            initPosY = posY;
+            initPosX = posX;
+
+            color = 0;
+            background = 3;
         }
 
         Pacman(double posY, double posX){
@@ -30,6 +41,12 @@ class Pacman{
             appearance = 35;
             this->posX = posX;
             this->posY = posY;
+
+            initPosY = posY;
+            initPosX = posX;
+
+            color = 0;
+            background = 3;
         }
 
         int getLifes(){
@@ -77,4 +94,30 @@ class Pacman{
         void setPosY(double posY){
             this->posY = posY;
         }
+
+
+        short getColor(){
+            return this->color;
+        }
+
+        short getBackground(){
+            return this->background;
+        }
+
+        void setColor(short color){
+            this->color = color;
+        }
+
+        void setBackground(short background){
+            this->background = background;
+        }
+
+        double getInitPosX(){
+            return initPosX;
+        }
+
+        double getInitPosY(){
+            return initPosY;
+        }
+
 };

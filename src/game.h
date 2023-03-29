@@ -6,6 +6,7 @@
 #include "pacman.h"
 #include "gameScreen.h"
 #include "randomPath.h"
+#include "ghost.h"
 
 using namespace std;
 
@@ -15,13 +16,21 @@ class Game{
     bool gameEnded;
     Screen screen;
     vector<vector<int>> gameMap;
+    
     Pacman player;
+    Ghost blinky;
+    Ghost pinky;
+    Ghost inky;
+    Ghost clyde;
+
     string fontColor;
     string bgColor;
     char columnSeparator;
     int score;
     int pellets;
-    IPathFinder* ia;
+    vector<IEntity*> entityList;
+    vector<Ghost*> ghostList;
+    IPathFinder* ai;
 
     chrono::_V2::system_clock::time_point fpsTimer;
     chrono::_V2::system_clock::time_point refreshTimer;
@@ -39,10 +48,30 @@ class Game{
         this->player = Pacman(25,13);
         this->columnSeparator = ' ';
         this->score = 0;
-        this->ia = new RandomPath();
+        this->ai = new RandomPath();
         this->fps = 0;
-        this->fpsCap = 100; //50=~20fps
+        this->fpsCap = 50; //50=~20fps, 33=30fps, 16=~60fps
         this->movementCap = 10;
+
+        this->blinky = Ghost(16, 11, 63, COLOR_BLACK, COLOR_RED, new RandomPath());
+        this->pinky = Ghost(16, 12, 63, COLOR_BLACK, COLOR_MAGENTA, new RandomPath());
+        this->inky = Ghost(16, 15, 63, COLOR_BLACK, COLOR_CYAN), new RandomPath();
+        this->clyde = Ghost(16, 16, 63, COLOR_BLACK, COLOR_GREEN, new RandomPath());
+
+        this->ghostList = {
+            &blinky,
+            &pinky,
+            &inky,
+            &clyde
+        };
+
+        this->entityList = {
+            &player,
+            &blinky,
+            &pinky,
+            &inky,
+            &clyde
+        };
     }
 
     void play(){
@@ -54,7 +83,7 @@ class Game{
         init_pair(0, COLOR_BLACK, COLOR_WHITE);
 
         printMap();
-        printEntities();
+        printPlayer();
         preGame();
         movementTimer = chrono::high_resolution_clock::now();
         refreshTimer = chrono::high_resolution_clock::now();
@@ -68,11 +97,24 @@ class Game{
             // limit to update player movement
             if(movementDiff >= movementCap){
                 movementTimer = chrono::high_resolution_clock::now();
-                vector<double> nextExpectedPos = getNextPlayerPos();
-                if(isValidPlayerMove(nextExpectedPos))
+                                
+                for(int index = 0; index < ghostList.size(); index++){
+                    auto movement = ghostList[index]->nextPath();
+                    ghostList[index]->setAxisY(movement[0]);
+                    ghostList[index]->setAxisX(movement[1]);
+
+                    vector<double> nextExpectedPos = getNextEntityPos(ghostList[index]);
+                    if(isValidGhostMove(nextExpectedPos, ghostList[index]))
+                    {
+                        moveEntity(ghostList[index]);
+                    }
+                }
+
+                vector<double> nextExpectedPos = getNextEntityPos(&player);
+                if(isValidPlayerMove(nextExpectedPos, &player))
                 {
                     processNextMoveScore(nextExpectedPos[0], nextExpectedPos[1]);
-                    movePlayer();
+                    moveEntity(&player);
                 }
             }
 
@@ -102,6 +144,7 @@ class Game{
         auto now = chrono::high_resolution_clock::now();
         long diff = chrono::duration_cast<chrono::milliseconds>(now-fpsTimer).count();
 
+        printDebug(8, "Blinky("+to_string(entityList[1]->getAppearance())+") pos["+to_string(entityList[1]->getPosY())+"]["+to_string(entityList[1]->getPosX())+"]");
         printDebug(6, "Fps: "+ to_string(fps) + "fps");
 
 
@@ -114,9 +157,16 @@ class Game{
         }
     }
 
-    bool isValidPlayerMove(vector<double> nextExpectedPos){
-        return (
-                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == player.getAppearance() ||
+    bool isValidGhostMove(vector<double> nextExpectedPos, IEntity* entity){
+        return (gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == entity->getAppearance() ||
+                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.BLANK_SPACE ||
+                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.PELLET || 
+                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.POWER_PELLET|| 
+                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.GHOST_GATE);
+    }
+
+    bool isValidPlayerMove(vector<double> nextExpectedPos, IEntity* entity){
+        return (gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == entity->getAppearance() ||
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.BLANK_SPACE ||
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.PELLET || 
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.POWER_PELLET);
@@ -138,16 +188,21 @@ class Game{
     }
 
     void player_ia(){
-        vector<Axis> movement = ia->turnDirection();
+        vector<Axis> movement = ai->turnDirection();
         player.setAxisY(movement[0]);
         player.setAxisX(movement[1]);
     }
 
     void resetMap(){
-        player.setPosX(13);
-        player.setPosY(25);
+        player.setPosX(player.getInitPosX());
+        player.setPosY(player.getInitPosY());
         gameMap = screen.setupGameField();
         pellets = screen.countPellets(gameMap);
+
+        for(int index = 0; index < ghostList.size(); index++){
+            ghostList[index]->setPosX(ghostList[index]->getInitPosX());
+            ghostList[index]->setPosY(ghostList[index]->getInitPosY());
+        }
     }
 
     void processNextMoveScore(int posY, int posX){
@@ -164,21 +219,21 @@ class Game{
         }
     }
 
-    vector<double> getPlayerDeltas(){
+    vector<double> getEntityDeltas(IEntity* entity){
         vector<double> deltas(2, 0);
 
-        deltas[0] = player.getAxisY()*player.getSpeed();
-        deltas[1] = player.getAxisX()*player.getSpeed();
+        deltas[0] = entity->getAxisY()*entity->getSpeed();
+        deltas[1] = entity->getAxisX()*entity->getSpeed();
         
         return deltas;
     }
 
-    vector<double> getNextPlayerPos(){
+    vector<double> getNextEntityPos(IEntity* entity){
         vector<double> pos(2, 0);
-        vector<double> deltas = getPlayerDeltas();
+        vector<double> deltas = getEntityDeltas(entity);
 
-        pos[0] = player.getPosY()+deltas[0];
-        pos[1] = player.getPosX()+deltas[1];
+        pos[0] = entity->getPosY()+deltas[0];
+        pos[1] = entity->getPosX()+deltas[1];
         
         return pos;
     }
@@ -219,11 +274,11 @@ class Game{
         refresh();
     }
 
-    void movePlayer(){
-        vector<double> nextPos = getNextPlayerPos();
+    void moveEntity(IEntity* entity){
+        vector<double> nextPos = getNextEntityPos(entity);
 
-        player.setPosY(nextPos[0]);
-        player.setPosX(nextPos[1]);
+        entity->setPosY(nextPos[0]);
+        entity->setPosX(nextPos[1]);
     }
 
     // can be optimized to just print the diff, not the entire map (maybe ncurses already does that, idk)
@@ -251,7 +306,7 @@ class Game{
         refresh();
     }
 
-    void printEntities(){
+    void printPlayer(){
         int row,col;
         getmaxyx(stdscr,row,col);
         init_pair(3, COLOR_BLACK, COLOR_YELLOW);
@@ -262,6 +317,22 @@ class Game{
         mvprintw(row-1, col-1, " ");
 
         refresh();
+    }
+
+    void printEntities(){
+        int row,col;
+        getmaxyx(stdscr,row,col);
+
+        for(int index = 0; index < entityList.size(); index++){
+            init_pair(30+index, entityList[index]->getColor(), entityList[index]->getBackground());
+
+            attron(COLOR_PAIR(30+index)); 
+            mvprintw(floor(entityList[index]->getPosY()), floor(entityList[index]->getPosX())*2, "%c", (char)entityList[index]->getAppearance());
+            attroff(COLOR_PAIR(30+index));
+            mvprintw(row-1, col-1, " ");
+
+            refresh();
+        }
     }
 
     void keyPressHandler(){

@@ -1,5 +1,6 @@
 #include "axis.h"
 #include "IEntity.h"
+#include "IpathFinder.h"
 
 class Ghost : public IEntity{
     private:
@@ -12,16 +13,50 @@ class Ghost : public IEntity{
         short color;
         short background;
 
+        double initPosY;
+        double initPosX;
+
+        IPathFinder* AI;
+
     public:
+        Ghost(){
+            speed = 0.1;
+            axisY = neutral;
+            axisX = neutral;
+            this->appearance = 63;
+            this->posX = 0;
+            this->posY = 0;
+            initPosY = posY;
+            initPosX = posX;
+            this->color = 0;
+            this->background = 7;
+        }
+
         Ghost(double posY, double posX, int appearance, short color, short background){
             speed = 0.1;
             axisY = neutral;
             axisX = neutral;
-            appearance = appearance;
+            this->appearance = appearance;
             this->posX = posX;
             this->posY = posY;
+            initPosY = posY;
+            initPosX = posX;
             this->color = color;
             this->background = background;
+        }
+
+        Ghost(double posY, double posX, int appearance, short color, short background, IPathFinder* AI){
+            speed = 0.1;
+            axisY = neutral;
+            axisX = neutral;
+            this->appearance = appearance;
+            this->posX = posX;
+            this->posY = posY;
+            initPosY = posY;
+            initPosX = posX;
+            this->color = color;
+            this->background = background;
+            this->AI = AI;
         }
 
         double getSpeed(){
@@ -73,5 +108,17 @@ class Ghost : public IEntity{
         }
         void setBackground(short background){
             this->background = background;
+        }
+
+        std::vector<Axis> nextPath(){
+            return AI->turnDirection();
+        }
+
+        double getInitPosX(){
+            return initPosX;
+        }
+
+        double getInitPosY(){
+            return initPosY;
         }
 };

@@ -10,6 +10,8 @@ class IEntity{
         double speed;
         double posX;
         double posY;
+        double initPosY;
+        double initPosX;
         short color;
         short background;
     
@@ -23,6 +25,8 @@ class IEntity{
         virtual void setAxisY(Axis axisY) = 0;
         virtual double getPosX() = 0;
         virtual double getPosY() = 0;
+        virtual double getInitPosX() = 0;
+        virtual double getInitPosY() = 0;
         virtual void setPosX(double posX) = 0;
         virtual void setPosY(double posY) = 0;
         virtual short getColor() = 0;
