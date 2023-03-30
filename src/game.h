@@ -35,6 +35,7 @@ class Game{
     chrono::_V2::system_clock::time_point fpsTimer;
     chrono::_V2::system_clock::time_point refreshTimer;
     chrono::_V2::system_clock::time_point movementTimer;
+    chrono::_V2::system_clock::time_point globalTimer;
 
     int iterationCounter;
     int fps;
@@ -53,25 +54,13 @@ class Game{
         this->fpsCap = 50; //50=~20fps, 33=30fps, 16=~60fps
         this->movementCap = 10;
 
-        this->blinky = Ghost(16, 11, 63, COLOR_BLACK, COLOR_RED, new RandomPath());
-        this->pinky = Ghost(16, 12, 63, COLOR_BLACK, COLOR_MAGENTA, new RandomPath());
-        this->inky = Ghost(16, 15, 63, COLOR_BLACK, COLOR_CYAN), new RandomPath();
-        this->clyde = Ghost(16, 16, 63, COLOR_BLACK, COLOR_GREEN, new RandomPath());
+        this->blinky = Ghost(16, 11, 66, COLOR_BLACK, COLOR_RED);
+        this->pinky = Ghost(16, 12, 80, COLOR_BLACK, COLOR_MAGENTA);
+        this->inky = Ghost(16, 15, 73, COLOR_BLACK, COLOR_CYAN);
+        this->clyde = Ghost(16, 16, 99, COLOR_BLACK, COLOR_GREEN);
 
-        this->ghostList = {
-            &blinky,
-            &pinky,
-            &inky,
-            &clyde
-        };
-
-        this->entityList = {
-            &player,
-            &blinky,
-            &pinky,
-            &inky,
-            &clyde
-        };
+        this->ghostList = { &blinky, &pinky, &inky, &clyde };
+        this->entityList = { &player, &blinky, &pinky, &inky, &clyde };
     }
 
     void play(){
@@ -84,6 +73,7 @@ class Game{
 
         printMap();
         printPlayer();
+        globalTimer = chrono::high_resolution_clock::now();
         preGame();
         movementTimer = chrono::high_resolution_clock::now();
         refreshTimer = chrono::high_resolution_clock::now();
@@ -144,9 +134,12 @@ class Game{
         auto now = chrono::high_resolution_clock::now();
         long diff = chrono::duration_cast<chrono::milliseconds>(now-fpsTimer).count();
 
-        printDebug(8, "Blinky("+to_string(entityList[1]->getAppearance())+") pos["+to_string(entityList[1]->getPosY())+"]["+to_string(entityList[1]->getPosX())+"]");
+        printDebug(8, "Player front Pos ("+to_string(gameMap[player.getPosY()+1*player.getAxisY()][player.getPosX()+1*player.getAxisX()])+") ["+to_string(player.getPosY()+1*player.getAxisY())+"]["+to_string(player.getPosX()+1*player.getAxisX())+"]");
         printDebug(6, "Fps: "+ to_string(fps) + "fps");
 
+
+        vector<double> nextExpectedPos = getNextEntityPos(&player);
+        printDebug(9, "Is next pos valid? "+to_string(isValidPlayerMove(nextExpectedPos, &player)));
 
         if(diff>=1000){
             fps = iterationCounter;
@@ -160,7 +153,9 @@ class Game{
     bool isValidGhostMove(vector<double> nextExpectedPos, IEntity* entity){
         return (gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == entity->getAppearance() ||
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.BLANK_SPACE ||
-                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.PELLET || 
+                gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.PELLET ||
+                (floor(nextExpectedPos[0]) == 16 && floor(nextExpectedPos[1]) == -1)  ||
+                (floor(nextExpectedPos[0]) == 16 && floor(nextExpectedPos[1]) == 28)  ||
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.POWER_PELLET|| 
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.GHOST_GATE);
     }
@@ -169,6 +164,8 @@ class Game{
         return (gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == entity->getAppearance() ||
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.BLANK_SPACE ||
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.PELLET || 
+                (floor(nextExpectedPos[0]) == 16 && floor(nextExpectedPos[1]) == -1)  ||
+                (floor(nextExpectedPos[0]) == 16 && floor(nextExpectedPos[1]) == 28)  ||
                 gameMap[floor(nextExpectedPos[0])][floor(nextExpectedPos[1])] == screen.POWER_PELLET);
     }
 
@@ -277,8 +274,16 @@ class Game{
     void moveEntity(IEntity* entity){
         vector<double> nextPos = getNextEntityPos(entity);
 
-        entity->setPosY(nextPos[0]);
-        entity->setPosX(nextPos[1]);
+        if(floor(nextPos[0]) == 16 && floor(nextPos[1]) ==-1){
+            entity->setPosY(16);
+            entity->setPosX(27);    
+        }else if(floor(nextPos[0]) == 16 && floor(nextPos[1]) ==28){
+            entity->setPosY(16);
+            entity->setPosX(0);    
+        } else {
+            entity->setPosY(nextPos[0]);
+            entity->setPosX(nextPos[1]);
+        }
     }
 
     // can be optimized to just print the diff, not the entire map (maybe ncurses already does that, idk)

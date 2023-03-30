@@ -23,7 +23,7 @@ cd pacPlus
 - [ ] Player Movement
   - [x] Up, Down, Left and Right
   - [ ] Instant direction change (right now sometimes it takes >~50ms to turn)
-  - [ ] Scroll to other side then crossing the map border
+  - [x] Scroll to other side then crossing the map border
 - [ ] Interacting with collectibles
   - [x] Pellets increase player score by 10
   - [x] Power Pellets increase player score by 50

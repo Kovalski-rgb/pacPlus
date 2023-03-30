@@ -1,6 +1,7 @@
 #include "axis.h"
 #include "IEntity.h"
 #include "IpathFinder.h"
+#include "randomPath.h"
 
 class Ghost : public IEntity{
     private:
@@ -30,6 +31,7 @@ class Ghost : public IEntity{
             initPosX = posX;
             this->color = 0;
             this->background = 7;
+            AI = new RandomPath();
         }
 
         Ghost(double posY, double posX, int appearance, short color, short background){
@@ -43,6 +45,7 @@ class Ghost : public IEntity{
             initPosX = posX;
             this->color = color;
             this->background = background;
+            AI = new RandomPath();
         }
 
         Ghost(double posY, double posX, int appearance, short color, short background, IPathFinder* AI){
